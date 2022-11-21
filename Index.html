@@ -8,15 +8,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 </head>
 
+
 <body>
     <div id="app">
         <header>
             <h1 v-text="sitename"></h1>
-            <button v-on:click='showCheckout'>
+            
+
+            <div id="sort-bar">
+                <select name="sortBy" id="select" v-model="sortBy">
+                  <option value="subject" > Subject</option>
+                  <option value="location"> Location</option>
+                  <option value="location"> Price</option>
+                  <option value="location"> Availability</option>
+                </select>
+                <button v-on:click="ascending = !ascending" class="sort-button">
+                    <i v-if="ascending" class="fa fa-sort-up"></i>
+                    <i v-else class="fa fa-sort-down"></i>
+                  </button>
+
+            <input type="text" v-model="searchValue" placeholder="Search Subject" id="search-input"></input>
+            <i class="fa fa-search"></i>
+
+            <button v-on:click='showCheckout':disabled="checkoutVal">
                 {{cartItemCount}}
                 <span class="fas fa-cart-plus"></span> Checkout
             </button>
-        </header>
+         
+             
+        </header> 
         <main>
             <div v-if='showProduct'>
                 <div v-for="product in sortedProducts">
@@ -24,23 +44,20 @@
                     <figure>
                         <img v-bind:src="product.image" width="200" height="150">
                     </figure>
-                    <p v-html="product.description"></p>
+                    <p v-html="product.location"></p>
                   <b><p>Subject:</b>{{product.subject}}</p>
                   <b><p>Location:</b>{{product.location}}</p>
                   <b><p>Price: </b>{{product.price}}</p>
-                  <b><p>Spaces:</b>{{product.spaces}}</p>
-                   
-
-                    <!-- <button v-on:click="addToCart" 
-                    v-show='canAddToCart'>
-                    Add to cart
-                    </button> -->
-
-                    <button v-on:click='addToCart(product)' v-if='canAddToCart(product)'>Add to cart</button>
-
+                  <b><p>Availability:</b>{{product.availableInventory - cartCount(product.id) }}</p>
+                 
+                  <button v-on:click='addToCart(product)' v-if='canAddToCart(product)'>Add to cart</button>
                     <button disabled="disabled" v-else>Add to cart</button>
 
-                    
+                    <span v-if='product.availableInventory === cartCount(product.id)'>No Seats Available</span>
+                    <span v-else-if="product.availableInventory - cartCount(product.id) < 5">
+                        {{product.availableInventory - cartCount(product.id)}} Spots left!
+                    </span>
+                    <span v-else>Enroll Now!</span>
 
                     
                 </div>
@@ -53,21 +70,15 @@
                     <input v-model.trim="order.Name" />
                 </p>
                 
-                <p>
-                    
-                  
-                        <!-- <option v-bind:value="states.AL">AL</option>
-                        <option v-bind:value="states.AR">AR</option>
-                        <option v-bind:value="states.CA">CA</option>
-                        <option v-bind:value="states.NV">NV</option> -->
-                    </select>
-                </p>
+               
                 <p>
                     <strong>Phone:</strong>
                     <input v-model.number="order.Phone" type="number" />
                 </p>
-
                 
+                <h2>Order Information</h2>
+                <p>Name: {{order.Name}}</p>
+                <p>Phone: {{order.Phone}}</p>
                
 
                
@@ -79,12 +90,13 @@
                         <figure>
                             <img v-bind:src="product.image">
                         </figure>
-                        <p v-html="product.subject"></p>
+                        <p v-text="product.subject"></p>
+                        <p v-html="product.location"></p>
                         <p>Price: {{product.price}}</p>
                     </div>
 
-
-                <button v-on:click="submitForm">Place Order</button>
+                    <button v-on:click="submitForm">Place Order</button>
+                
             </div>
         </main>
     </div>
@@ -96,27 +108,26 @@
                 sitename: 'Subjects Availability',
                 products: products,
                 showProduct: true,
-                // product: {
-                //     id: 1001,
-                //     title: "Cat Food, 25lb bag",
-                //     description: "A 25 pound bag of <em>irresistible</em>, " + "organic goodness for your cat.",
-                //     price: 2000,
-                //     image: "images/product-fullsize.png",
-                //     spaces: 10,
-                //     rating: 3
-                // },
+               
+    //             products = [
+    // {
+    //                 "id": 1001,
+    //                 "subject":'Math',
+    //                 "location": "London",
+    //                 "price": '£100',
+    //                 "image": "images/math.png",
+    //                 "availableInventory": 10 ,
+               
                 cart: [],
                 
                 order: {
                     Name: '',  
-                    zip: '',
+                    phone: '',
                    
             
                 },
             },
-            // created: function () {
-            //     this.products = allProducts
-            // },
+           
             methods: {
                 addToCart(product) {
                     this.cart.push(product.id);
@@ -130,7 +141,7 @@
                     alert('Order submitted!')
                 },
                 canAddToCart(product) {
-                    return product.spaces > this.cartCount(product.id);
+                    return product.availableInventory > this.cartCount(product.id);
                 },
                 cartCount(id) {
                     let count = 0;
@@ -147,8 +158,12 @@
                 cartItemCount() {
                     return this.cart.length;
                 },
+
+               
+              
+            
                 // canAddToCart(product) {
-                //     return product.spaces > this.cartItemCount;
+                //     return product.availableInventory > this.cartItemCount;
                 // }
                 sortedProducts() {
                     let productsArray = this.products.slice(0);
@@ -160,8 +175,12 @@
                         return 0;
                     }
                     return productsArray.sort(compare);
-                }
+                },
+
+                checkoutVal: function(){
+                    return this.cartItemCount > 0 ? false : true;
             },
+        },
         });
     </script>
 </body>
