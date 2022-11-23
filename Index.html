@@ -19,8 +19,8 @@
                 <select name="sortBy" id="select" v-model="sortBy">
                   <option value="subject" > Subject</option>
                   <option value="location"> Location</option>
-                  <option value="location"> Price</option>
-                  <option value="location"> Availability</option>
+                  <option value="price"> Price</option>
+                  <option value="Availability"> Availability</option>
                 </select>
                 <button v-on:click="ascending = !ascending" class="sort-button">
                     <i v-if="ascending" class="fa fa-sort-up"></i>
@@ -44,14 +44,13 @@
                     <figure>
                         <img v-bind:src="product.image" width="200" height="150">
                     </figure>
-                    <p v-html="product.location"></p>
                   <b><p>Subject:</b>{{product.subject}}</p>
                   <b><p>Location:</b>{{product.location}}</p>
                   <b><p>Price: </b>{{product.price}}</p>
                   <b><p>Availability:</b>{{product.availableInventory - cartCount(product.id) }}</p>
                  
                   <button v-on:click='addToCart(product)' v-if='canAddToCart(product)'>Add to cart</button>
-                    <button disabled="disabled" v-else>Add to cart</button>
+                    <button disabled="disabled" v-else>Add to cart</button> 
 
                     <span v-if='product.availableInventory === cartCount(product.id)'>No Seats Available</span>
                     <span v-else-if="product.availableInventory - cartCount(product.id) < 5">
@@ -108,6 +107,9 @@
                 sitename: 'Subjects Availability',
                 products: products,
                 showProduct: true,
+                ascending:true,
+                sortBy:'product',
+                searchValue:'',
                
     //             products = [
     // {
@@ -158,23 +160,78 @@
                 cartItemCount() {
                     return this.cart.length;
                 },
+                sortedProducts() {
+                let tempSubjects = this.products
 
-               
+                   if (this.searchValue != '' && this.searchValue) {
+                      tempSubjects = tempSubjects.filter((item) => {
+                         return item.subject
+                          .toUpperCase()
+                          .includes(this.searchValue.toUpperCase())
+               })
+               }
+
+                 tempSubjects = tempSubjects.sort((a, b) => {
+            if (this.sortBy == 'subject') {
+                let fa = a.subject.toLowerCase(), fb = b.subject.toLowerCase()
+          
+              if (fa < fb) {
+                return -1
+              }
+              if (fa > fb) {
+                return 1 
+              }
+              return 0
               
+            }            if (this.sortBy == 'location') {
+                let fa = a.location.toLowerCase(), fb = b.location.toLowerCase()
+          
+              if (fa < fb) {
+                return -1
+              }
+              if (fa > fb) {
+                return 1 
+              }
+              return 0
+              
+            } 
+            
+            if (this.sortBy == 'price') {
+                let fa = a.price.toLowerCase(), fb = b.price.toLowerCase()
+          
+              if (fa < fb) {
+                return -1
+              }
+              if (fa > fb) {
+                return 1 
+              }
+              return 0
+              
+            }            
+             if (this.sortBy == 'availableInventory') {
+                let fa = a.availableInventory.toLowerCase(), fb = b.availableInventory.toLowerCase()
+          
+              if (fa < fb) {
+                return -1
+              }
+              if (fa > fb) {
+                return 1 
+              }
+              return 0
+              
+            } 
+        })
+        if (!this.ascending) {
+        	tempSubjects.reverse()
+        }
+        
+        return tempSubjects
+        
             
                 // canAddToCart(product) {
                 //     return product.availableInventory > this.cartItemCount;
                 // }
-                sortedProducts() {
-                    let productsArray = this.products.slice(0);
-                    function compare(a, b) {
-                        if (a.price > b.price)
-                            return 1;
-                        if (a.price < b.price)
-                            return -1;
-                        return 0;
-                    }
-                    return productsArray.sort(compare);
+              
                 },
 
                 checkoutVal: function(){
