@@ -27,21 +27,36 @@
                     <i v-else class="fa fa-sort-down"></i>
                   </button>
 
-            <input type="text" v-model="searchValue" placeholder="Search Subject" id="search-input"></input>
+            <input type="text" v-model="searchValue" placeholder="Search Title..." id="search-input"></input>
+
             <i class="fa fa-search"></i>
 
+            
+
+              
+
+           
+
+            
+                  <!-- run javascript code when they are triggered for example click -->
             <button v-on:click='showCheckout':disabled="checkoutVal">
                 {{cartItemCount}}
                 <span class="fas fa-cart-plus"></span> Checkout
             </button>
+
+            
          
              
         </header> 
         <main>
             <div v-if='showProduct'>
+
+                <!-- //We can use the v-for directive to render a list of items based on an array. (subjects.js file)  -->
                 <div v-for="product in sortedProducts">
                     <h2 v-text="product.title"></h2>
                     <figure>
+
+                        <!-- v-bind used to bind one or more attributes, or a component property to an element -->
                         <img v-bind:src="product.image" width="200" height="150">
                     </figure>
                   <b><p>Subject:</b>{{product.subject}}</p>
@@ -52,6 +67,8 @@
                   <button v-on:click='addToCart(product)' v-if='canAddToCart(product)'>Add to cart</button>
                     <button disabled="disabled" v-else>Add to cart</button> 
 
+
+                        <!-- v - if is used to conditionally render a process -->
                     <span v-if='product.availableInventory === cartCount(product.id)'>No Seats Available</span>
                     <span v-else-if="product.availableInventory - cartCount(product.id) < 5">
                         {{product.availableInventory - cartCount(product.id)}} Spots left!
@@ -60,12 +77,17 @@
 
                     
                 </div>
+
             </div>
+
+          
+
+
             <div v-else>
                 <h2>Checkout</h2>
                 <p>
                     <strong>Name:</strong>
-                    <!-- This input field is bound to 'firstName' in the 'order' object -->
+                    <!-- This input field is bound to 'Name' in the 'order' object -->
                     <input v-model.trim="order.Name" />
                 </p>
                 
@@ -75,26 +97,13 @@
                     <input v-model.number="order.Phone" type="number" />
                 </p>
                 
-                <h2>Order Information</h2>
+                <h3>Order Information</h3>
                 <p>Name: {{order.Name}}</p>
                 <p>Phone: {{order.Phone}}</p>
                
 
-               
-               
-               
-           <div v-if='showProducts'>
-                    <div v-for="product in sortedProducts">
-                        <h2 v-text="product.title"></h2>
-                        <figure>
-                            <img v-bind:src="product.image">
-                        </figure>
-                        <p v-text="product.subject"></p>
-                        <p v-html="product.location"></p>
-                        <p>Price: {{product.price}}</p>
-                    </div>
-
-                    <button v-on:click="submitForm">Place Order</button>
+                <button v-on:click="submitForm">Place Order</button>
+        
                 
             </div>
         </main>
@@ -118,7 +127,7 @@
     //                 "location": "London",
     //                 "price": '£100',
     //                 "image": "images/math.png",
-    //                 "availableInventory": 10 ,
+    //                 "availableInventory": 5 ,
                
                 cart: [],
                 
@@ -156,6 +165,8 @@
                 }
             },
             
+
+             // Computed properties used to calculate and display values based on a value or set of values in the data model.
             computed: {
                 cartItemCount() {
                     return this.cart.length;
@@ -170,6 +181,8 @@
                           .includes(this.searchValue.toUpperCase())
                })
                }
+
+              
 
                  tempSubjects = tempSubjects.sort((a, b) => {
             if (this.sortBy == 'subject') {
@@ -225,6 +238,19 @@
         	tempSubjects.reverse()
         }
         
+                  {
+
+                      const value= this.searchValue.charAt(0).toUpperCase() + this.searchValue.slice(1);
+
+                      return this.products.filter(function(subjects){
+
+                        return subjects.subject.indexOf(value) > -1 ||
+
+                         subjects.location.indexOf(value) > -1
+
+                       })
+
+                         }
         return tempSubjects
         
             
@@ -243,3 +269,4 @@
 </body>
 
 </html>
+
