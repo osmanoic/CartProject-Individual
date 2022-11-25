@@ -27,9 +27,12 @@
                     <i v-else class="fa fa-sort-down"></i>
                   </button>
 
-            <input type="text" v-model="searchValue" placeholder="Search Title..." id="search-input"></input>
+           
+           
+           
+                  <input type="text" v-model="searchValue" placeholder="Search Title..." id="search-input"></input>
 
-            <i class="fa fa-search"></i>
+                 <i class="fa fa-search"></i>
 
             
 
@@ -138,7 +141,8 @@
             
                 },
             },
-           
+
+        //    methods are functions used to perform events
             methods: {
                 addToCart(product) {
                     this.cart.push(product.id);
@@ -239,6 +243,7 @@
         }
         
                   {
+                    
 
                       const value= this.searchValue.charAt(0).toUpperCase() + this.searchValue.slice(1);
 
@@ -254,9 +259,7 @@
         return tempSubjects
         
             
-                // canAddToCart(product) {
-                //     return product.availableInventory > this.cartItemCount;
-                // }
+              
               
                 },
 
